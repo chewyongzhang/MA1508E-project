@@ -1,0 +1,103 @@
+import numpy  as np
+from numpy.linalg import *
+
+input('If you want to encrypt the content, please enter "Encrypt()" \nIf you want to decrypt the content, please enter "Decrypt()"')
+
+W_to_N={'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,'i':8,'j':9,'k':10,'l':11,'m':12,'n':13,'o':14,'p':15,'q':16,'r':17,'s':18,'t':19,'u':20,'v':21,'w':22,'x':23,'y':24,'z':25}
+N_to_W={0:'a',1:'b',2:'c',3:'d',4:'e',5:'f',6:'g',7:'h',8:'i',9:'j',10:'k',11:'l',12:'m',13:'n',14:'o',15:'p',16:'q',17:'r',18:'s',19:'t',20:'u',21:'v',22:'w',23:'x',24:'y',25:'z'}
+
+def Det(m):
+      arr_d=np.array(m)
+      d=det(arr_d)
+      return(d)
+
+def Inv(n):
+      arr_i=np.array(n)
+      i=inv(arr_i)
+      return(i)
+
+def Read(x):
+      KEY_MATRIX=[]
+      ROW_K=[]
+      x=x.split( ';' )
+      order=len(x)
+      for i in range(order):
+            row=x[i].split( ',' )
+            for j in range(len(row)):
+                  ROW_K.append(int(row[j]))
+            KEY_MATRIX.append(ROW_K)
+            ROW_K=[]
+      return (KEY_MATRIX)
+      
+def Encrypt():
+      WORD=[]
+      ROW_W=[]
+      Encryption_result=''    
+      O=input('How many letters are in the word you want to encrypt:')
+      while True:
+            KEY_MATRIX=[]
+            K_e=input('Please set up an ' +'order '+ O+ ' invertible matrix as your key (e.g. 1,2;5,6):')
+            KEY_MATRIX=Read(K_e)
+            det=round(Det(KEY_MATRIX))
+            KEY_MATRIX=np.array(KEY_MATRIX)
+      
+            if det==0:
+                  print('Sorry, the key matrix you set is not invertible. Please try again.')
+                  continue
+            else:
+                  print(KEY_MATRIX)
+                  print('Got it!')
+                  break
+
+      word=input('Please enter the word you want to encrypt (Lowercase):')
+      for item in word:
+            ROW_W.append(W_to_N[item])
+            WORD.append(ROW_W)
+            ROW_W=[]
+      WORD_MATRIX=np.array(WORD)
+
+      Encryption_Matrix=np.dot(KEY_MATRIX, WORD_MATRIX)
+      for num in Encryption_Matrix:
+            Divisor_E=int(num)//26
+            Simplest_Num_E=int(num)-Divisor_E*26
+            Encryption_result+=N_to_W[Simplest_Num_E]
+      print('Your encrypted word is ' + '"' + Encryption_result + '"')
+
+def Decrypt():
+      ROW_EW=[]
+      WORD_E=[]
+      Decryption_result=''
+      y=0
+      K_d=input('Please enter the key matrix (e.g. 1,2;5,6):')
+      KEY_MATRIX=Read(K_d)
+      DET_MATRIX=Det(KEY_MATRIX)  #det
+      while y < 26:
+            res= (y * int(DET_MATRIX)) % 26
+            if res == 1:
+                  Multiplicative_inverse_modulo=y
+                  break
+            else:
+                  y+=1
+                  if y==26:
+                        return(DET_MATRIX, ' has no multiplicative inverse modulo under mod 26.')
+      INV_MATRIX=Inv(KEY_MATRIX)    #inverse
+      Adjugate_MATRIX=DET_MATRIX *INV_MATRIX % 26   #Adjugate
+      Adjugate_MATRIX=np.around(Adjugate_MATRIX)           #int
+      RESULT_MATRIX=Multiplicative_inverse_modulo * Adjugate_MATRIX % 26      #final key
+
+      Encrypted_WORD=input('Please enter the word you want to decrypt:')
+      for item in Encrypted_WORD:
+            ROW_EW.append(W_to_N[item])
+            WORD_E.append(ROW_EW)
+            ROW_EW=[]
+      WORD_E_MATRIX=np.array(WORD_E)   #The matrix corresponding to the encrypted words
+
+      Decryption_Matrix=np.dot(RESULT_MATRIX, WORD_E_MATRIX)
+      for num in Decryption_Matrix:
+            Divisor_D=int(num)//26
+            Simplest_Num_D=int(num)-Divisor_D*26
+            Decryption_result+=N_to_W[Simplest_Num_D]
+      print('Your decrypted word is ' + '"' + Decryption_result + '"')
+      
+
+      
