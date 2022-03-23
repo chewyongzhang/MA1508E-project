@@ -1,6 +1,7 @@
 import numpy  as np
 from numpy.linalg import *
 import random
+import json
 
 
 W_to_N={'A':0,'B':1,'C':2,'D':3,'E':4,'F':5,'G':6,'H':7,'I':8,'J':9,'K':10,'L':11,'M':12,'N':13,'O':14,'P':15,'Q':16,'R':17,'S':18,'T':19,'U':20,'V':21,'W':22,'X':23,'Y':24,'Z':25}
@@ -31,7 +32,7 @@ def Read(x):
       return (KEY_MATRIX)
 def KMatrix_Generator(no_letters):
     KEY_MATRIX = np.random.randint(10, size=(no_letters,no_letters)) #Order = no_letters
-    Key_Matrices[no_letters] = KEY_MATRIX
+    Key_Matrices[no_letters] = KEY_MATRIX.tolist()
     return KEY_MATRIX
     
 def Encrypt():
@@ -51,7 +52,7 @@ def Encrypt():
         WORD_MATRIX = np.array(WORD)
         
         if len(word) in Key_Matrices:#check if key matrix is already generated
-            KEY_MATRIX = Key_Matrices[len(word)]
+            KEY_MATRIX = np.array(Key_Matrices[len(word)])
         else:
             KEY_MATRIX = KMatrix_Generator(len(word))
 
@@ -63,7 +64,8 @@ def Encrypt():
             Encryption_result += N_to_W[Simplest_Num_E]
         Encryption_result += ' '
 
-            
+    with open("Key_matrices.txt", 'w') as file: #Store matrices into txt file
+        file.write(json.dumps(Key_Matrices))
     print('Your encrypted text is ' + '"' + Encryption_result + '"')
 
 def Decrypt():
