@@ -30,6 +30,7 @@ def Read(x):
             KEY_MATRIX.append(ROW_K)
             ROW_K=[]
       return (KEY_MATRIX)
+    
 def KMatrix_Generator(no_letters):
     KEY_MATRIX = np.random.randint(10, size=(no_letters,no_letters)) #Order = no_letters
     Key_Matrices[no_letters] = KEY_MATRIX.tolist()
@@ -40,6 +41,8 @@ def Encrypt():
     Encryption_result=''    
     Text = input('What do you want to encrypt:')
     text = Text.split()
+    file_name = input("how do you want to name your key matrix file:\n") #name the filename that user want to store their key matrices in
+    
     for word in text:
         WORD=[]
         
@@ -64,7 +67,7 @@ def Encrypt():
             Encryption_result += N_to_W[Simplest_Num_E]
         Encryption_result += ' '
 
-    with open("Key_matrices.txt", 'w') as file: #Store matrices into txt file
+    with open(f"{file_name}.txt", 'w') as file: #Store matrices into txt file
         file.write(json.dumps(Key_Matrices))
     print('Your encrypted text is ' + '"' + Encryption_result + '"')
 
@@ -109,3 +112,4 @@ if User_Input == "Encrypt":
     Encrypt()
 elif User_Input == "Decrypt":
     Decrypt()
+
