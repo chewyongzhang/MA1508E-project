@@ -78,9 +78,25 @@ def Decrypt():
       WORD_E=[]
       Decryption_result=''
       y=0
-      K_d=input('Please enter the key matrix (e.g. 1,2;5,6):')
-      KEY_MATRIX=Read(K_d)
-      DET_MATRIX=Det(KEY_MATRIX)  #det
+      #
+      outcome=input("Do you generate a key previously? [Yes/No]")
+      if outcome=="Yes" or "YES" or "yes":
+          key_file=input("Please key in the name of the key file:\n")
+          with open(key_file) as file:
+              the_key=file.read()
+              KEY_MATRIX=Read(the_key[0])
+              print(KEY_MATRIX)
+              DET_MATRIX=Det(KEY_MATRIX)
+      if outcome=="No" or "NO" or "no":
+          result=input("Do you prefer auto-generated key (1) or manual key(2)? Please key in 1 or 2. ")
+          if result==1:
+                KEY_MATRIX = KMatrix_Generator(len(word))
+                DET_MATRIX=Det(KEY_MATRIX)
+          else: 
+              K_d=input('Please enter the key matrix (e.g. 1,2;5,6):')
+              KEY_MATRIX=Read(K_d)
+              DET_MATRIX=Det(KEY_MATRIX)        
+        #det
       while y < 26:
             res= (y * int(DET_MATRIX)) % 26
             if res == 1:
@@ -114,3 +130,5 @@ if User_Input == "Encrypt":
     Encrypt()
 elif User_Input == "Decrypt":
     Decrypt()
+
+
